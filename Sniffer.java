@@ -53,6 +53,47 @@ public class Sniffer extends Thread
 		ReadPackets(deviceIndex);
 	}
 	
+	public SniffedPacket ProcessPacket(JPacket packet)
+	{
+		SniffedPacket tempPacket = new SniffedPacket();
+		tempPacket.timeStamp = new Date(packet.getCaptureHeader().timestampInMillis()).toString();
+		tempPacket.length = String.valueOf(packet.getCaptureHeader().caplen());
+		
+		byte[] ipv4_header = new byte[20];
+		byte[] ether_header = new byte[14];
+		
+		ether_header = packet.getByteArray(0, 14);
+		
+		if(ether_header[12] == 0x08 && ether_header[13] == 0x00)
+		{
+			
+			ipv4_header = packet.getByteArray(14, 20);
+			if(ipv4_header[9] == 0x06)
+			{
+				// IPv4 -- TCP
+				tempPacket.protocol = "TCP";
+				tempPacket.source = String.valueOf(ipv4_header[12]) + "." + String.valueOf(ipv4_header[13]) + "." + String.valueOf(ipv4_header[14]) + "." + String.valueOf(ipv4_header[15]);
+				tempPacket.destination = String.valueOf(ipv4_header[16]) + "." + String.valueOf(ipv4_header[17]) + "." + String.valueOf(ipv4_header[18]) + "." + String.valueOf(ipv4_header[19]);
+			}
+			else if(ipv4_header[9] == 0x11)
+			{
+				tempPacket.protocol = "UDP";
+				tempPacket.source = String.valueOf(ipv4_header[12]) + "." + String.valueOf(ipv4_header[13]) + "." + String.valueOf(ipv4_header[14]) + "." + String.valueOf(ipv4_header[15]);
+				tempPacket.destination = String.valueOf(ipv4_header[16]) + "." + String.valueOf(ipv4_header[17]) + "." + String.valueOf(ipv4_header[18]) + "." + String.valueOf(ipv4_header[19]);
+			}
+		}
+		//else if(ether_header[12] == 0x08 && ether_header[13] == 0x00 && ipv4_header[9] == 0x11)
+		else
+		{
+			// IPv4 -- UDP
+			tempPacket.protocol = "UNKNOWN";
+			tempPacket.source = "UNKNOWN";
+			tempPacket.destination = "UNKNOWN";
+		}
+		
+		return tempPacket;
+	}
+	
 	public void ReadPackets(int deviceIndex)
 	{
 		// ---------------------------Open the first device in the list (we know it will be the active one)--------------------------
@@ -69,8 +110,9 @@ public class Sniffer extends Thread
         {
         	@Override
             public void nextPacket(JPacket packet, ArrayList<JPacket> listOfPackets)
-            {              
-                sniffWindow.addPacket(String.valueOf(++recievedPacketsCount), new Date(packet.getCaptureHeader().timestampInMillis()).toString(), String.valueOf(packet.getCaptureHeader().caplen()), String.valueOf(packet.getCaptureHeader().wirelen()));
+            {
+        		SniffedPacket pkt = ProcessPacket(packet);
+                sniffWindow.addPacket(String.valueOf(++recievedPacketsCount), pkt.timeStamp, pkt.length, pkt.protocol, pkt.source, pkt.destination);
             	listOfPackets.add(packet);
             }
         };

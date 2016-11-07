@@ -52,13 +52,15 @@ public class SnifferWindow{
 			new Object[][] {
 			},
 			new String[] {
-				"Packet Number", "Time", "Capture Length", "Length"
+				"Packet Number", "Time", "Capture Length", "Protocol", "Source", "Destination"
 			}
 		));
 		table.getColumnModel().getColumn(0).setPreferredWidth(83);
 		table.getColumnModel().getColumn(1).setPreferredWidth(76);
 		table.getColumnModel().getColumn(2).setPreferredWidth(78);
 		table.getColumnModel().getColumn(3).setPreferredWidth(80);
+		table.getColumnModel().getColumn(4).setPreferredWidth(80);
+		table.getColumnModel().getColumn(5).setPreferredWidth(80);
 		container.setLayout(new BorderLayout(0, 0));
 		container.add(table.getTableHeader(), BorderLayout.PAGE_START);
 		container.add(table, BorderLayout.CENTER);
@@ -77,10 +79,10 @@ public class SnifferWindow{
 	    });
 	}
 	
-	public void addPacket(String num, String time, String capLen, String len)
+	public void addPacket(String num, String time, String capLen, String protocol, String source, String destination)
 	{
 		DefaultTableModel model = (DefaultTableModel) table.getModel();
-		model.addRow(new Object[]{num, time, capLen, len});
+		model.addRow(new Object[]{num, time, capLen, protocol, source, destination});
 	}
 	
 	public void closeWindow()
