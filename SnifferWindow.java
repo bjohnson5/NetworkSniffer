@@ -31,12 +31,13 @@ public class SnifferWindow{
 		
 		// Create and add components to the Sniffer Window
 		frame = new JFrame();
-		frame.setBounds(100, 100, 1031, 585);
+		frame.setBounds(100, 100, 1119, 659);
 		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		frame.getContentPane().setLayout(new BorderLayout(0, 0));
 		
 		JPanel panel = new JPanel();
-		frame.getContentPane().add(panel, BorderLayout.CENTER);
-		panel.setLayout(new GridLayout(1, 0, 0, 0));
+		frame.getContentPane().add(panel);
+		panel.setLayout(new GridLayout(0, 1, 0, 0));
 		
 		JPanel container = new JPanel();
 		JScrollPane scrollPane = new JScrollPane(container);
@@ -52,15 +53,17 @@ public class SnifferWindow{
 			new Object[][] {
 			},
 			new String[] {
-				"Packet Number", "Time", "Capture Length", "Protocol", "Source", "Destination"
+				"Packet Number", "Time", "Capture Length", "Protocol", "Source Address", "Destination Address", "Source Port", "Destination Port"
 			}
 		));
-		table.getColumnModel().getColumn(0).setPreferredWidth(83);
-		table.getColumnModel().getColumn(1).setPreferredWidth(76);
-		table.getColumnModel().getColumn(2).setPreferredWidth(78);
+		table.getColumnModel().getColumn(0).setPreferredWidth(80);
+		table.getColumnModel().getColumn(1).setPreferredWidth(80);
+		table.getColumnModel().getColumn(2).setPreferredWidth(80);
 		table.getColumnModel().getColumn(3).setPreferredWidth(80);
 		table.getColumnModel().getColumn(4).setPreferredWidth(80);
 		table.getColumnModel().getColumn(5).setPreferredWidth(80);
+		table.getColumnModel().getColumn(6).setPreferredWidth(80);
+		table.getColumnModel().getColumn(7).setPreferredWidth(80);
 		container.setLayout(new BorderLayout(0, 0));
 		container.add(table.getTableHeader(), BorderLayout.PAGE_START);
 		container.add(table, BorderLayout.CENTER);

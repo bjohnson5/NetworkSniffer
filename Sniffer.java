@@ -61,6 +61,8 @@ public class Sniffer extends Thread
 		
 		byte[] ipv4_header = new byte[20];
 		byte[] ether_header = new byte[14];
+		byte[] tcp_header = new byte[20];
+		byte[] udp_header = new byte[8];
 		
 		ether_header = packet.getByteArray(0, 14);
 		
@@ -72,17 +74,20 @@ public class Sniffer extends Thread
 			{
 				// IPv4 -- TCP
 				tempPacket.protocol = "TCP";
-				tempPacket.source = String.valueOf(ipv4_header[12]) + "." + String.valueOf(ipv4_header[13]) + "." + String.valueOf(ipv4_header[14]) + "." + String.valueOf(ipv4_header[15]);
-				tempPacket.destination = String.valueOf(ipv4_header[16]) + "." + String.valueOf(ipv4_header[17]) + "." + String.valueOf(ipv4_header[18]) + "." + String.valueOf(ipv4_header[19]);
+				tempPacket.source = String.valueOf(Byte.toUnsignedLong(ipv4_header[12])) + "." + String.valueOf(Byte.toUnsignedLong(ipv4_header[13])) + "." + String.valueOf(Byte.toUnsignedLong(ipv4_header[14])) + "." + String.valueOf(Byte.toUnsignedLong(ipv4_header[15]));
+				tempPacket.destination = String.valueOf(Byte.toUnsignedLong(ipv4_header[16])) + "." + String.valueOf(Byte.toUnsignedLong(ipv4_header[17])) + "." + String.valueOf(Byte.toUnsignedLong(ipv4_header[18])) + "." + String.valueOf(Byte.toUnsignedLong(ipv4_header[19]));
+				tcp_header = packet.getByteArray(34, 20);
+				//TODO: Set ports
 			}
 			else if(ipv4_header[9] == 0x11)
 			{
 				tempPacket.protocol = "UDP";
-				tempPacket.source = String.valueOf(ipv4_header[12]) + "." + String.valueOf(ipv4_header[13]) + "." + String.valueOf(ipv4_header[14]) + "." + String.valueOf(ipv4_header[15]);
-				tempPacket.destination = String.valueOf(ipv4_header[16]) + "." + String.valueOf(ipv4_header[17]) + "." + String.valueOf(ipv4_header[18]) + "." + String.valueOf(ipv4_header[19]);
+				tempPacket.source = String.valueOf(Byte.toUnsignedLong(ipv4_header[12])) + "." + String.valueOf(Byte.toUnsignedLong(ipv4_header[13])) + "." + String.valueOf(Byte.toUnsignedLong(ipv4_header[14])) + "." + String.valueOf(Byte.toUnsignedLong(ipv4_header[15]));
+				tempPacket.destination = String.valueOf(Byte.toUnsignedLong(ipv4_header[16])) + "." + String.valueOf(Byte.toUnsignedLong(ipv4_header[17])) + "." + String.valueOf(Byte.toUnsignedLong(ipv4_header[18])) + "." + String.valueOf(Byte.toUnsignedLong(ipv4_header[19]));
+				udp_header = packet.getByteArray(34, 8);
+				//TODO: Set ports
 			}
 		}
-		//else if(ether_header[12] == 0x08 && ether_header[13] == 0x00 && ipv4_header[9] == 0x11)
 		else
 		{
 			// IPv4 -- UDP
